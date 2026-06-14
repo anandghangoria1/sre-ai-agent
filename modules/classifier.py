@@ -7,6 +7,8 @@ def classify_incident(text):
     Classify this incident into:
     CPU / Memory / Network / Service
 
+    Only return one word.
+
     Incident: {text}
     """
 
@@ -15,9 +17,14 @@ def classify_incident(text):
         messages=[{"role": "user", "content": prompt}]
     )
 
-    output = resp.choices[0].message.content.strip()
+    output = resp.choices[0].message.content
 
-    # Remove <think>...</think> sections
-    output = re.sub(r"<think>.*?</think>", "", output, flags=re.DOTALL).strip()
+    # Remove <think>...</think>
+    output = re.sub(r"<think>.*?</think>", "", output, flags=re.DOTALL)
 
-    return output
+    output = output.strip()
+
+    # Extract first word
+    category = output.split()[0]
+
+    return category
